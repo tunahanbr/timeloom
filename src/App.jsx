@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./components/Sidebar";
-import Timer from "./components/Timer";
+import TaskInput from "./components/TaskInput";
+import Timeline from "./components/Timeline";
 
 function App() {
   const [projects, setProjects] = useState([
@@ -58,13 +59,22 @@ function App() {
 
   return (
     <>
-   {/* <Sidebar projects={projects} /> */} 
-   <div class="flex flex-col items-center justify-center h-screen">
-      <div className="flex rounded-lg p-3 items-center">
-          <input size="40" className="bg-gray-50 focus:outline-none rounded-lg p-2 shadow-sm" type="text" placeholder="What are you working on?" />
-          <Timer />
+    <div className="h-screen flex">
+      {/* Sidebar Section */}
+      <div className="flex items-center justify-center">
+        <Sidebar projects={projects} />
       </div>
-   </div>
+
+      {/* Main Content Section */}
+      <div className="flex-1 flex flex-col items-center justify-center">
+          <div>
+          {/* Input field with controls */}
+          <TaskInput />
+          {/* Timeline */}
+          <Timeline timeline={projects[0].timeline} />
+          </div>
+        </div>
+      </div>
     </>
   );
 }
