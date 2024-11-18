@@ -47,15 +47,11 @@ function App() {
           start_time: "23:10:00",
           duration: "01:11:10",
         },
-        {
-          id: 2,
-          name: "Developed the about section and added all the details",
-          start_time: "00:59:21",
-          duration: "00:55:10",
-        },
       ],
     },
   ]);
+
+  const [selectedProject, setSelectedProject] = useState({})
 
   return (
     <>
@@ -69,7 +65,7 @@ function App() {
       <div className="flex-1 flex flex-col items-center justify-center">
           {/* Input field with controls */}
           <TaskInput />
-          <div>
+          <div className="h-1/2">
           {/* Timeline */}
           <Timeline timeline={projects[1].timeline} />
           </div>
