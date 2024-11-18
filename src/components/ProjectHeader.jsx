@@ -46,7 +46,7 @@ const ProjectHeader = ({ project, onUpdate }) => {
     <div className="flex items-center gap-5 mb-5 p-5">
       <div className="relative group">
         {/* Project Icon/Initials */}
-        <div className="w-14 h-14 rounded-lg p-2 bg-gray-100 flex items-center justify-center overflow-hidden">
+        <div className="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
           {project.icon || selectedFile ? (
             <img 
               src={selectedFile || project.icon} 
