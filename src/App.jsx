@@ -70,6 +70,12 @@ function App() {
 
   {/* Main Content Section */}
   <div className="flex-1 flex flex-col items-center justify-center">
+    {/* Project Image and Name View */}
+    <div className="flex items-center gap-5 mb-5 p-5">
+      <img className="w-14 h-14 bg-gray-50 rounded-lg" src={projects[selectedProjectId].icon} />
+      <span className="text-lg">{projects[selectedProjectId].name}</span>
+    </div>
+
     {/* TaskInput */}
     <div className="w-full max-w-2xl">
       <TaskInput setNewEntry={handleNewEntry} />

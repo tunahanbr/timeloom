@@ -10,7 +10,6 @@ function Timer({ setNewEntry, input, setInput }) {
 
   // Function to format milliseconds into the desired time format
   const formatTime = (ms) => {
-    
     const second = Math.floor((ms / 1000) % 60)
       .toString()
       .padStart(2, "0");
