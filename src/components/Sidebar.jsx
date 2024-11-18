@@ -67,7 +67,7 @@ const Sidebar = ({ projects, setSelectedProjectId, handleNewProject }) => {
 
   return (
     <div className="mx-2">
-      <div className="rounded-xl w-16 h-80 my-auto flex flex-col relative">
+      <div className="rounded-md w-16 h-80 my-auto flex flex-col relative">
         {/* Top scroll indicator */}
         <div 
           className={`absolute top-0 left-0 right-0 z-10 flex justify-center py-1 bg-gradient-to-b from-white to-transparent transition-opacity duration-200 ${

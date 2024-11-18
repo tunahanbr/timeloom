@@ -5,106 +5,87 @@ import Timeline from "./components/Timeline";
 import ProjectHeader from "./components/ProjectHeader";
 
 function App() {
-  const [projects, setProjects] = useState([
-    {
-      id: 0,
-      name: "timeloom",
-      icon: "timeloom.svg",
-      timeline: [
-        {
-          id: 0,
-          name: "Worked on prototyping timeloom",
-          start_time: "19:23:00",
-          duration: "01:00:00",
-        },
-        {
-          id: 1,
-          name: "Worked on developing timeloom",
-          start_time: "20:51:00",
-          duration: "01:36:10",
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: "Portfolio Website",
-      icon: "portfolio.png",
-      timeline: [
-        {
-          id: 0,
-          name: "Worked on prototyping the portfolio website",
-          start_time: "19:23:00",
-          duration: "01:00:00",
-        },
-        {
-          id: 1,
-          name: "Setting up project",
-          start_time: "21:10:00",
-          duration: "00:34:10",
-        },
-        {
-          id: 2,
-          name: "Developed the hero section",
-          start_time: "23:10:00",
-          duration: "01:11:10",
-        },
-      ],
-    },
-  ]);
-
-  const [selectedProjectId, setSelectedProjectId] = useState(0);
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   const handleNewEntry = (entry) => {
+    if (selectedProjectId === null || !projects.length) return;
+    
     const updatedProjects = [...projects];
     updatedProjects[selectedProjectId].timeline.push(entry);
     setProjects(updatedProjects);
   };
 
   const handleNewProject = () => {
-    const updatedProjects = [...projects];
     const newProject = {
-      id: new Date().getTime(), // More reliable than just new Date()
+      id: new Date().getTime(),
       name: 'New Project',
-      icon: '', // Empty string for no icon
+      icon: '',
       timeline: []
-    }
-    updatedProjects.push(newProject)
-    setProjects(updatedProjects)
-  }
+    };
+    
+    setProjects(prev => [...prev, newProject]);
+    // Automatically select the new project
+    setSelectedProjectId(projects.length);
+  };
+
+  // Get the currently selected project safely
+  const selectedProject = selectedProjectId !== null && projects[selectedProjectId] 
+    ? projects[selectedProjectId] 
+    : null;
 
   return (
     <>
       <div className="h-screen flex">
-        {/* Sidebar Section */}
-        <div className="flex items-center justify-center">
-          <Sidebar
-            projects={projects}
-            setSelectedProjectId={setSelectedProjectId}
-            handleNewProject={handleNewProject}
-          />
-        </div>
-
-        {/* Main Content Section */}
-        <div className="flex-1 flex flex-col items-center justify-center">
-          {/* Project Image and Name View */}
-          <ProjectHeader
-            project={projects[selectedProjectId]}
-            onUpdate={(updatedProject) => {
-              const updatedProjects = [...projects];
-              updatedProjects[selectedProjectId] = updatedProject;
-              setProjects(updatedProjects);
-            }}
-          />
-
-          {/* TaskInput */}
-          <div className="w-full max-w-2xl">
-            <TaskInput setNewEntry={handleNewEntry} />
+        {/* Sidebar Section - Only show when there are projects */}
+        {projects.length > 0 && (
+          <div className="flex items-center justify-center">
+            <Sidebar
+              projects={projects}
+              setSelectedProjectId={setSelectedProjectId}
+              handleNewProject={handleNewProject}
+            />
           </div>
+        )}
 
-          {/* Timeline */}
-          <div className="w-full max-w-2xl h-1/2">
-            <Timeline timeline={projects[selectedProjectId].timeline} />
-          </div>
+        {/* Main Content Section - Adjust width based on sidebar presence */}
+        <div className={`flex flex-col items-center justify-center ${projects.length === 0 ? 'w-full' : 'flex-1'}`}>
+          {projects.length === 0 ? (
+            // Empty state - centered on full width
+            <div className="text-center text-gray-500">
+              <h2 className="text-2xl font-semibold mb-2">Welcome to Timeloom</h2>
+              <p className="mb-4">Get started by creating your first project</p>
+              <button
+                onClick={handleNewProject}
+                className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2 mx-auto"
+              >
+                Create Your First Project
+              </button>
+            </div>
+          ) : selectedProject ? (
+            // Project view
+            <>
+              <ProjectHeader
+                project={selectedProject}
+                onUpdate={(updatedProject) => {
+                  const updatedProjects = [...projects];
+                  updatedProjects[selectedProjectId] = updatedProject;
+                  setProjects(updatedProjects);
+                }}
+              />
+              <div className="w-full max-w-2xl">
+                <TaskInput setNewEntry={handleNewEntry} />
+              </div>
+              <div className="w-full max-w-2xl h-1/2">
+                <Timeline timeline={selectedProject.timeline} />
+              </div>
+            </>
+          ) : (
+            // No project selected state
+            <div className="text-center text-gray-500">
+              <p>Select a project to view its timeline</p>
+            </div>
+          )}
         </div>
       </div>
     </>
