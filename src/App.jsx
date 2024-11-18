@@ -53,6 +53,17 @@ function App() {
 
   const [selectedProjectId, setSelectedProjectId] = useState(0)
 
+  const [newEntry, setNewEntry] = useState(null)
+
+  const handleNewEntry = (entry) => {
+    const updatedProjects = [...projects];
+    updatedProjects[selectedProjectId].timeline.push(entry);
+    setProjects(updatedProjects);
+  };
+
+
+  
+
   return (
     <>
     <div className="h-screen flex">
@@ -65,7 +76,7 @@ function App() {
   <div className="flex-1 flex flex-col items-center justify-center">
     {/* TaskInput */}
     <div className="w-full max-w-2xl">
-      <TaskInput />
+      <TaskInput setNewEntry={handleNewEntry} />
     </div>
 
     {/* Timeline */}
