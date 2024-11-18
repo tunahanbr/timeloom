@@ -51,26 +51,30 @@ function App() {
     },
   ]);
 
-  const [selectedProject, setSelectedProject] = useState({})
+  const [selectedProjectId, setSelectedProjectId] = useState(0)
 
   return (
     <>
     <div className="h-screen flex">
-      {/* Sidebar Section */}
-      <div className="flex items-center justify-center">
-        <Sidebar projects={projects} />
-      </div>
+  {/* Sidebar Section */}
+  <div className="flex items-center justify-center">
+    <Sidebar projects={projects} setSelectedProjectId={setSelectedProjectId} />
+  </div>
 
-      {/* Main Content Section */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-          {/* Input field with controls */}
-          <TaskInput />
-          <div className="h-1/2">
-          {/* Timeline */}
-          <Timeline timeline={projects[1].timeline} />
-          </div>
-        </div>
-      </div>
+  {/* Main Content Section */}
+  <div className="flex-1 flex flex-col items-center justify-center">
+    {/* TaskInput */}
+    <div className="w-full max-w-2xl">
+      <TaskInput />
+    </div>
+
+    {/* Timeline */}
+    <div className="w-full max-w-2xl h-1/2">
+      <Timeline timeline={projects[selectedProjectId].timeline} />
+    </div>
+  </div>
+</div>
+
     </>
   );
 }
