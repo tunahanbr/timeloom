@@ -71,7 +71,7 @@ function App() {
           {/* Input field with controls */}
           <TaskInput />
           {/* Timeline */}
-          <Timeline timeline={projects[0].timeline} />
+          <Timeline timeline={projects[1].timeline} />
           </div>
         </div>
       </div>

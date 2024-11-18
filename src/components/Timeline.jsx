@@ -20,8 +20,8 @@ function Timeline( {timeline} ) {
               <td className="px-6 py-3">{item.name}</td>
               <td className="px-6 py-3">{item.start_time}</td>
               <td className="px-6 py-3">{item.duration}</td>
-              <td>
-                <RiMore2Line className="hover:text-black cursor-pointer" />
+              <td className="px-4 py-2 hover:text-black cursor-pointer">
+                <RiMore2Line />
               </td>
             </tr>
           ))}
