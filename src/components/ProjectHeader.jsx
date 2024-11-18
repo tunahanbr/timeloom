@@ -51,7 +51,7 @@ const ProjectHeader = ({ project, onUpdate }) => {
             <img 
               src={selectedFile || project.icon} 
               alt={project.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover p-2"
             />
           ) : (
             <span className="text-lg font-semibold text-gray-600">
