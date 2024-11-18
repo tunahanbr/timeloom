@@ -67,9 +67,9 @@ function App() {
 
       {/* Main Content Section */}
       <div className="flex-1 flex flex-col items-center justify-center">
-          <div>
           {/* Input field with controls */}
           <TaskInput />
+          <div>
           {/* Timeline */}
           <Timeline timeline={projects[1].timeline} />
           </div>
