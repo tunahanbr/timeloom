@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Sidebar from "./components/Sidebar";
+import Timer from "./components/Timer";
 
 function App() {
   const [projects, setProjects] = useState([
     {
       id: 0,
       name: "timeloom",
-      icon:'timeloom.svg',
+      icon: "timeloom.svg",
       timeline: [
         {
           id: 0,
@@ -25,7 +26,7 @@ function App() {
     {
       id: 1,
       name: "Portfolio Website",
-      icon:'portfolio.png',
+      icon: "portfolio.png",
       timeline: [
         {
           id: 0,
@@ -57,7 +58,13 @@ function App() {
 
   return (
     <>
-      <Sidebar projects={projects} />
+   {/* <Sidebar projects={projects} /> */} 
+   <div class="flex flex-col items-center justify-center h-screen">
+      <div className="flex rounded-lg p-3 items-center">
+          <input size="40" className="bg-gray-50 focus:outline-none rounded-lg p-2 shadow-sm" type="text" placeholder="What are you working on?" />
+          <Timer />
+      </div>
+   </div>
     </>
   );
 }
