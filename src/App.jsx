@@ -53,16 +53,12 @@ function App() {
 
   const [selectedProjectId, setSelectedProjectId] = useState(0)
 
-  const [newEntry, setNewEntry] = useState(null)
-
   const handleNewEntry = (entry) => {
     const updatedProjects = [...projects];
     updatedProjects[selectedProjectId].timeline.push(entry);
     setProjects(updatedProjects);
   };
 
-
-  
 
   return (
     <>
