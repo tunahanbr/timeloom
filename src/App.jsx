@@ -2,6 +2,7 @@ import { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import TaskInput from "./components/TaskInput";
 import Timeline from "./components/Timeline";
+import ProjectHeader from "./components/ProjectHeader";
 
 function App() {
   const [projects, setProjects] = useState([
@@ -51,7 +52,7 @@ function App() {
     },
   ]);
 
-  const [selectedProjectId, setSelectedProjectId] = useState(0)
+  const [selectedProjectId, setSelectedProjectId] = useState(0);
 
   const handleNewEntry = (entry) => {
     const updatedProjects = [...projects];
@@ -59,35 +60,53 @@ function App() {
     setProjects(updatedProjects);
   };
 
+  const handleNewProject = () => {
+    const updatedProjects = [...projects];
+    const newProject = {
+      id: new Date().getTime(), // More reliable than just new Date()
+      name: 'New Project',
+      icon: '', // Empty string for no icon
+      timeline: []
+    }
+    updatedProjects.push(newProject)
+    setProjects(updatedProjects)
+  }
 
   return (
     <>
-    <div className="h-screen flex">
-  {/* Sidebar Section */}
-  <div className="flex items-center justify-center">
-    <Sidebar projects={projects} setSelectedProjectId={setSelectedProjectId} />
-  </div>
+      <div className="h-screen flex">
+        {/* Sidebar Section */}
+        <div className="flex items-center justify-center">
+          <Sidebar
+            projects={projects}
+            setSelectedProjectId={setSelectedProjectId}
+            handleNewProject={handleNewProject}
+          />
+        </div>
 
-  {/* Main Content Section */}
-  <div className="flex-1 flex flex-col items-center justify-center">
-    {/* Project Image and Name View */}
-    <div className="flex items-center gap-5 mb-5 p-5">
-      <img className="w-14 h-14 bg-gray-50 rounded-lg" src={projects[selectedProjectId].icon} />
-      <span className="text-lg">{projects[selectedProjectId].name}</span>
-    </div>
+        {/* Main Content Section */}
+        <div className="flex-1 flex flex-col items-center justify-center">
+          {/* Project Image and Name View */}
+          <ProjectHeader
+            project={projects[selectedProjectId]}
+            onUpdate={(updatedProject) => {
+              const updatedProjects = [...projects];
+              updatedProjects[selectedProjectId] = updatedProject;
+              setProjects(updatedProjects);
+            }}
+          />
 
-    {/* TaskInput */}
-    <div className="w-full max-w-2xl">
-      <TaskInput setNewEntry={handleNewEntry} />
-    </div>
+          {/* TaskInput */}
+          <div className="w-full max-w-2xl">
+            <TaskInput setNewEntry={handleNewEntry} />
+          </div>
 
-    {/* Timeline */}
-    <div className="w-full max-w-2xl h-1/2">
-      <Timeline timeline={projects[selectedProjectId].timeline} />
-    </div>
-  </div>
-</div>
-
+          {/* Timeline */}
+          <div className="w-full max-w-2xl h-1/2">
+            <Timeline timeline={projects[selectedProjectId].timeline} />
+          </div>
+        </div>
+      </div>
     </>
   );
 }
