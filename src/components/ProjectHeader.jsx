@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Pencil, Check, X, Upload } from 'lucide-react';
+import { supabase } from "../utils/supabase"; // Import Supabase client
+
 
 const ProjectHeader = ({ project, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -27,15 +29,32 @@ const ProjectHeader = ({ project, onUpdate }) => {
     }
   };
 
-  const handleSave = () => {
-    onUpdate({
-      ...project,
-      name: editedName,
-      icon: selectedFile || project.icon
-    });
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      // Save the updated name and icon to the database
+      const { error } = await supabase
+        .from("projects")
+        .update({ name: editedName, icon: selectedFile || project.icon })
+        .eq("id", project.id);
+  
+      if (error) {
+        console.error("Error updating project:", error);
+        return;
+      }
+  
+      // Update the state in the parent component
+      onUpdate({
+        ...project,
+        name: editedName,
+        icon: selectedFile || project.icon,
+      });
+  
+      setIsEditing(false); // Exit editing mode
+    } catch (err) {
+      console.error("Error in handleSave:", err);
+    }
   };
-
+  
   const handleCancel = () => {
     setEditedName(project.name);
     setSelectedFile(null);

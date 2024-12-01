@@ -1,6 +1,6 @@
-// src/pages/MainPage.jsx
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../utils/supabase"; // Import Supabase client
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import TaskInput from "../components/TaskInput";
 import Timeline from "../components/Timeline";
@@ -9,55 +9,169 @@ import ProjectHeader from "../components/ProjectHeader";
 const MainPage = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  const handleNewEntry = (entry) => {
+  // Check for authenticated user session and fetch user projects
+  useEffect(() => {
+    const fetchSessionAndProjects = async () => {
+        try {
+          // Fetch the session
+          const { data: sessionData, error } = await supabase.auth.getSession();
+      
+          if (error || !sessionData?.session) {
+            console.error("Error fetching session or no session found:", error);
+            navigate("/login"); // Redirect to login
+            return;
+          }
+      
+          const session = sessionData.session;
+          if (!session.user) {
+            console.log("No user found in session, redirecting to login...");
+            navigate("/login");
+            return;
+          }
+      
+          setUser(session.user);
+      
+          // Fetch projects for the user
+          const { data: projectsData, error: projectsError } = await supabase
+            .from("projects")
+            .select("*, timeline_entries(*)") // Fetch related timeline entries
+            .eq("user_id", session.user.id);
+      
+          if (projectsError) {
+            console.error("Error fetching projects:", projectsError);
+          } else {
+            // Include the timeline in the projects data
+            const projectsWithTimeline = projectsData.map((project) => ({
+              ...project,
+              timeline: project.timeline_entries || [], // Map related timeline entries
+            }));
+            setProjects(projectsWithTimeline);
+            setSelectedProjectId(projectsWithTimeline?.length > 0 ? 0 : null);
+          }
+        } catch (fetchError) {
+          console.error("Error in fetchSessionAndProjects:", fetchError);
+          navigate("/login");
+        }
+      };
+  
+    fetchSessionAndProjects();
+  }, [navigate]);
+  
+
+  // Handle project creation
+  const handleNewProject = async () => {
+    if (!user) {
+      console.error("User not found");
+      return;
+    }
+  
+    try {
+      const { data, error } = await supabase
+        .from("projects")
+        .insert([
+          {
+            user_id: user.id, // Use the stored user ID
+            name: "New Project",
+            icon: "", // Default icon (can be updated later)
+          },
+        ])
+        .single(); // Fetch a single inserted row
+  
+      if (error) {
+        console.error("Error creating project:", error);
+        return;
+      }
+  
+      // Update state with the new project
+      setProjects((prev) => [...prev, { ...data, timeline: [] }]);
+      setSelectedProjectId(projects.length); // Automatically select the new project
+    } catch (err) {
+      console.error("Error in handleNewProject:", err);
+    }
+  };
+  
+
+  // Handle new entry in the timeline
+  const handleNewEntry = async (entry) => {
     if (selectedProjectId === null || !projects.length) return;
-
-    const updatedProjects = [...projects];
-    updatedProjects[selectedProjectId].timeline.push(entry);
-    setProjects(updatedProjects);
+  
+    const project = projects[selectedProjectId];
+  
+    try {
+      const { data, error } = await supabase
+        .from("timeline_entries")
+        .insert([
+          {
+            project_id: project.id,
+            name: entry.name,
+            start_time: new Date().toISOString(),
+            duration: entry.duration,
+          },
+        ])
+        .single();
+  
+      if (error) {
+        console.error("Error adding timeline entry:", error);
+      } else {
+        // Refetch the timeline for the selected project
+        const { data: timelineData, error: timelineError } = await supabase
+          .from("timeline_entries")
+          .select("*")
+          .eq("project_id", project.id);
+  
+        if (timelineError) {
+          console.error("Error fetching timeline entries:", timelineError);
+          return;
+        }
+  
+        const updatedProjects = [...projects];
+        updatedProjects[selectedProjectId] = {
+          ...updatedProjects[selectedProjectId],
+          timeline: timelineData || [],
+        };
+        setProjects(updatedProjects);
+      }
+    } catch (err) {
+      console.error("Error in handleNewEntry:", err);
+    }
   };
+  
 
-  const handleNewProject = () => {
-    const newProject = {
-      id: new Date().getTime(),
-      name: "New Project",
-      icon: "",
-      timeline: [],
-    };
-
-    setProjects((prev) => [...prev, newProject]);
-    // Automatically select the new project
-    setSelectedProjectId(projects.length);
-  };
-
-  // Get the currently selected project safely
   const selectedProject =
     selectedProjectId !== null && projects[selectedProjectId]
       ? projects[selectedProjectId]
       : null;
 
+  if (!user) {
+    return <div className="text-center">Loading...</div>;
+  }
+
   return (
     <div className="h-screen flex">
-      {/* Sidebar Section - Only show when there are projects */}
       {projects.length > 0 && (
         <div className="flex items-center justify-center">
           <Sidebar
             projects={projects}
             setSelectedProjectId={setSelectedProjectId}
             handleNewProject={handleNewProject}
+            user={user}
+            onLogout={async () => {
+              await supabase.auth.signOut();
+              navigate("/login");
+            }}
           />
         </div>
       )}
 
-      {/* Main Content Section - Adjust width based on sidebar presence */}
       <div
         className={`flex flex-col items-center justify-center ${
           projects.length === 0 ? "w-full" : "flex-1"
         }`}
       >
         {projects.length === 0 ? (
-          // Empty state - centered on full width
           <div className="text-center text-gray-500">
             <h2 className="text-2xl font-semibold mb-2">Welcome to Timeloom</h2>
             <p className="mb-4">Get started by creating your first project</p>
@@ -69,7 +183,6 @@ const MainPage = () => {
             </button>
           </div>
         ) : selectedProject ? (
-          // Project view
           <>
             <ProjectHeader
               project={selectedProject}
@@ -87,7 +200,6 @@ const MainPage = () => {
             </div>
           </>
         ) : (
-          // No project selected state
           <div className="text-center text-gray-500">
             <p>Select a project to view its timeline</p>
           </div>
