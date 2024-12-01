@@ -91,11 +91,7 @@ const Sidebar = ({ projects, setSelectedProjectId, handleNewProject }) => {
                 className="w-12 h-12 rounded-lg bg-gray-50 hover:scale-110 transition-transform cursor-pointer"
               >
                 {project.icon ? (
-<<<<<<< HEAD
-                  <img className="w-full h-full object-cover rounded-lg" src={project.icon} alt={project.name} />
-=======
                   <img className="w-full h-full object-cover rounded-lg p-2" src={project.icon} alt={project.name} />
->>>>>>> origin/main
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <span className="text-sm font-semibold text-gray-600">
