@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  vite-app:
+    build: .
+    ports:
+      - "8000:8000"  # Expose port 8000 for the Vite app
+    environment:
+      - VITE_API_URL=${VITE_API_URL}   # You can replace with your environment variables
+      - VITE_SECRET_KEY=${VITE_SECRET_KEY}  # Replace with your actual environment variable names
+    env_file:
+      - .env  # Optional: You can put your env variables in a `.env` file
+
