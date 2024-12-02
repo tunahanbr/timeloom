@@ -36,7 +36,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route
-          path="/"
+          path="/app"
           element={
             <ProtectedRoute>
               <MainPage />

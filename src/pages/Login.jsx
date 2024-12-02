@@ -19,7 +19,7 @@ function Login() {
     if (error) {
       setError(error.message);
     } else {
-      navigate('/'); // Redirect to main page on success
+      navigate('/app'); // Redirect to main page on success
     }
   };
 
