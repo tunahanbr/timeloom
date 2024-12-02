@@ -1,5 +1,5 @@
 # Step 1: Build the app using Node.js
-FROM node:22-alpine as build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
