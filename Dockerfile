@@ -1,29 +1,28 @@
-# Step 1: Use Node.js 22 image as the base image
-FROM node:22-slim AS build
+# Step 1: Build the app using Node.js
+FROM node:22-alpine as build
 
-# Step 2: Set working directory
 WORKDIR /app
 
-# Step 3: Copy package.json and package-lock.json (or yarn.lock)
-COPY package*.json ./
+# Copy the package.json and package-lock.json (or yarn.lock) for installing dependencies
+COPY package.json package-lock.json ./
 
-# Step 4: Install dependencies
-RUN npm install --frozen-lockfile
+# Install dependencies
+RUN npm install
 
-# Step 5: Copy the rest of your app's source code
+# Copy the entire project into the container
 COPY . .
 
-# Step 6: Build your Vite app for production
+# Build the Vite project (adjust for your project build command)
 RUN npm run build
 
-# Step 7: Serve the app using an HTTP server
+# Step 2: Set up Nginx to serve the built app
 FROM nginx:alpine
 
-# Step 8: Copy the built app from the build container to nginx
+# Copy the build output from the previous stage to the Nginx public directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Step 9: Expose the port the app will run on
-EXPOSE 8000
+# Copy the custom Nginx configuration file
+#COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Step 10: Start nginx to serve the app
-CMD ["nginx", "-g", "daemon off;"]
+# Expose port 80
+EXPOSE 80
