@@ -69,12 +69,13 @@ const MainPage = () => {
     }
   
     try {
+      // Step 1: Insert the new project into Supabase
       const { data, error } = await supabase
         .from("projects")
         .insert([
           {
             user_id: user.id, // Use the stored user ID
-            name: "New Project",
+            name: "New Project", // Default name
             icon: "", // Default icon (can be updated later)
           },
         ])
@@ -85,14 +86,29 @@ const MainPage = () => {
         return;
       }
   
-      // Update state with the new project
-      setProjects((prev) => [...prev, { ...data, timeline: [] }]);
-      setSelectedProjectId(projects.length); // Automatically select the new project
+      // Step 2: After the project is created, re-fetch the projects
+      const { data: projectsData, error: projectsError } = await supabase
+        .from("projects")
+        .select("*, timeline_entries(*)") // Fetch related timeline entries
+        .eq("user_id", user.id);
+  
+      if (projectsError) {
+        console.error("Error fetching projects:", projectsError);
+        return;
+      }
+  
+      // Step 3: Update the state with the newly fetched projects
+      const projectsWithTimeline = projectsData.map((project) => ({
+        ...project,
+        timeline: project.timeline_entries || [], // Map related timeline entries
+      }));
+  
+      setProjects(projectsWithTimeline);
+      setSelectedProjectId(projectsWithTimeline?.length > 0 ? 0 : null); // Automatically select the first project
     } catch (err) {
       console.error("Error in handleNewProject:", err);
     }
   };
-  
 
   // Handle new entry in the timeline
   const handleNewEntry = async (entry) => {

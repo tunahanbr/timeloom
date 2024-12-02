@@ -10,13 +10,19 @@ const ProjectHeader = ({ project, onUpdate }) => {
   
   // Generate initials from project name
   const getInitials = (name) => {
+    // Check if name is valid before attempting to split
+    if (!name || typeof name !== 'string') {
+      return ''; // Return an empty string if name is not valid
+    }
+    
     return name
       .split(' ')
       .map(word => word[0])
       .join('')
       .toUpperCase()
-      .slice(0, 2);
+      .slice(0, 2); // Return the first two initials
   };
+
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
