@@ -13,18 +13,21 @@ const App = () => {
   // Check for an authenticated user session
   useEffect(() => {
     const fetchSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (session) {
-        setUser(session.user);
-      }
-      setLoading(false); // Stop loading once session is checked
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) setUser(session.user);
+      setLoading(false);
     };
-
+  
     fetchSession();
+  
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null);
+      setLoading(false);
+    });
+  
+    return () => subscription.unsubscribe();
   }, []);
+  
 
   // Protect routes based on authentication
   const ProtectedRoute = ({ children }) => {

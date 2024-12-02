@@ -17,10 +17,10 @@ function Login( {setUser} ) {
     });
 
     if (error) {
-      setUser(data.user)
       setError(error.message);
     } else {
-      navigate('/'); // Redirect to main page on success
+      await supabase.auth.getSession();
+      navigate('/', { replace: true }); // Use replace to prevent back navigation
     }
   };
 
