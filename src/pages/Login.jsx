@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../utils/supabase'; // Import Supabase client
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Login( {setUser} ) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,6 +17,7 @@ function Login() {
     });
 
     if (error) {
+      setUser(data.user)
       setError(error.message);
     } else {
       navigate('/'); // Redirect to main page on success
