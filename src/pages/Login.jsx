@@ -97,6 +97,7 @@ function Login( {setUser} ) {
                     Sign up
                   </a>
                 </p>
+                <p className='text-sm text-gray-500'>Email: demo@timeloom.co Password: TryTimeloom11!</p>
               </form>
             </div>
           </div>
