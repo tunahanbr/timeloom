@@ -14,6 +14,7 @@ const MainPage = () => {
 
   // Check for authenticated user session and fetch user projects
   useEffect(() => {
+   
     const fetchSessionAndProjects = async () => {
         try {
           // Fetch the session
@@ -60,6 +61,21 @@ const MainPage = () => {
     fetchSessionAndProjects();
   }, [navigate]);
   
+
+  const handleProjectDelete = (deletedProjectId) => {
+    const projectIndex = projects.findIndex(p => p.id === deletedProjectId);
+    if (projectIndex === -1) return;
+  
+    const updatedProjects = projects.filter(p => p.id !== deletedProjectId);
+    setProjects(updatedProjects);
+    
+    // Select the next available project, or null if none left
+    if (updatedProjects.length === 0) {
+      setSelectedProjectId(null);
+    } else if (selectedProjectId >= updatedProjects.length) {
+      setSelectedProjectId(updatedProjects.length - 1);
+    }
+  };
 
   // Handle project creation
   const handleNewProject = async () => {
@@ -201,13 +217,14 @@ const MainPage = () => {
         ) : selectedProject ? (
           <>
             <ProjectHeader
-              project={selectedProject}
-              onUpdate={(updatedProject) => {
-                const updatedProjects = [...projects];
-                updatedProjects[selectedProjectId] = updatedProject;
-                setProjects(updatedProjects);
-              }}
-            />
+  project={selectedProject}
+  onUpdate={(updatedProject) => {
+    const updatedProjects = [...projects];
+    updatedProjects[selectedProjectId] = updatedProject;
+    setProjects(updatedProjects);
+  }}
+  onDelete={handleProjectDelete}
+/>
             <div className="w-full max-w-2xl">
               <TaskInput setNewEntry={handleNewEntry} />
             </div>
