@@ -20,7 +20,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 for the container
-EXPOSE 80
+EXPOSE 5173
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
